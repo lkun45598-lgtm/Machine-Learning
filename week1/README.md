@@ -12,7 +12,7 @@
 
 - 数据加载与探索（`head` / `info` / `describe` / `corr`）
 - 数据可视化（前8列分布直方图）
-- 缺失值处理（中位数填充）
+- 缺失值处理（先切分，再用训练集中位数填充，避免数据泄漏）
 - 特征标准化（StandardScaler）
 - 建模与对比：LinearRegression / Ridge / Lasso / ElasticNet
 - 模型评估：MSE、MAE、R²
@@ -56,18 +56,18 @@ python experiment1.py
 
 | 模型 | MSE | MAE | R² |
 |---|---|---|---|
-| LinearRegression | 24.9994 | 3.1487 | 0.6591 |
-| Ridge(alpha=1) | 25.0027 | 3.1457 | 0.6591 |
-| Ridge(alpha=10) | 25.0452 | 3.1324 | 0.6585 |
-| Ridge(alpha=20) | 25.0954 | 3.1268 | 0.6578 |
-| Lasso(alpha=1) | 27.7923 | 3.4500 | 0.6210 |
+| LinearRegression | 24.9834 | 3.1476 | 0.6593 |
+| Ridge(alpha=1) | 24.9870 | 3.1446 | 0.6593 |
+| Ridge(alpha=10) | 25.0309 | 3.1293 | 0.6587 |
+| Ridge(alpha=20) | 25.0821 | 3.1220 | 0.6580 |
+| Lasso(alpha=1) | 27.7621 | 3.4452 | 0.6214 |
 | Lasso(alpha=10) | 75.0454 | 6.2558 | -0.0233 |
 | Lasso(alpha=20) | 75.0454 | 6.2558 | -0.0233 |
-| ElasticNet(alpha=1, l1=0.2) | 28.1923 | 3.3612 | 0.6156 |
-| ElasticNet(alpha=1, l1=0.8) | 27.9091 | 3.4129 | 0.6194 |
-| ElasticNet(alpha=10, l1=0.2) | 58.1074 | 5.3629 | 0.2076 |
+| ElasticNet(alpha=1, l1=0.2) | 28.1807 | 3.3613 | 0.6157 |
+| ElasticNet(alpha=1, l1=0.8) | 27.8847 | 3.4087 | 0.6198 |
+| ElasticNet(alpha=10, l1=0.2) | 58.1125 | 5.3625 | 0.2076 |
 | ElasticNet(alpha=10, l1=0.8) | 75.0454 | 6.2558 | -0.0233 |
-| ElasticNet(alpha=20, l1=0.2) | 71.1351 | 6.0623 | 0.0300 |
+| ElasticNet(alpha=20, l1=0.2) | 71.1444 | 6.0627 | 0.0299 |
 | ElasticNet(alpha=20, l1=0.8) | 75.0454 | 6.2558 | -0.0233 |
 
 > Ridge 正则化最为稳健；Lasso/ElasticNet 在 alpha 过大时会严重欠拟合。
