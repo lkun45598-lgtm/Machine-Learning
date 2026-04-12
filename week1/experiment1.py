@@ -66,16 +66,20 @@ plt.close()
 print("直方图已保存为 histograms.png")
 
 # ============================================================
-# 数据预处理：填充缺失值 + 划分数据集
+# 数据预处理：先切分，再用训练集统计量填充（避免数据泄漏）
 # ============================================================
-df_clean = df.fillna(df.median())
+X = df.drop('MEDV', axis=1)
+y = df['MEDV']
 
-X = df_clean.drop('MEDV', axis=1)
-y = df_clean['MEDV']
-
+# 先切分
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
+
+# 只用训练集的中位数填充，再应用到测试集
+train_median = X_train.median()
+X_train = X_train.fillna(train_median)
+X_test  = X_test.fillna(train_median)
 
 scaler = StandardScaler()
 X_train_s = scaler.fit_transform(X_train)
