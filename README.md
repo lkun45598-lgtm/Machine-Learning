@@ -9,7 +9,7 @@
 ```
 Machine-Learning/
 ├── week1/          # 实验一：线性回归实现波士顿房价预测
-├── week2/          # 实验二：（待更新）
+├── week2/          # 实验二：分类算法实现乳腺癌良恶性预测
 └── ...
 ```
 
@@ -18,6 +18,7 @@ Machine-Learning/
 | 周次 | 实验内容 | 主要方法 |
 |---|---|---|
 | Week 1 | 波士顿房价预测 | LinearRegression / Ridge / Lasso / ElasticNet |
+| Week 2 | 乳腺癌良恶性分类 | LogisticRegression / KNN / SVM / DecisionTree / RandomForest / GaussianNB |
 
 ---
 
