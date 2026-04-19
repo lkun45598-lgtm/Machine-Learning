@@ -59,8 +59,10 @@ print("\n" + "=" * 65)
 print("步骤2. 替换 ? 为 NaN，查看数据基本信息")
 print("=" * 65)
 
-# 原始文件 Bare Nuclei 列含 '?'，强制转数值时转为 NaN
-df["Bare Nuclei"] = pd.to_numeric(df["Bare Nuclei"], errors="coerce")
+# 将所有列中的 '?' 替换为 NaN
+df.replace("?", np.nan, inplace=True)
+# 确保所有列都是数值类型
+df = df.apply(pd.to_numeric, errors="coerce")
 
 df.info()
 print("\n各列缺失值数量：")
