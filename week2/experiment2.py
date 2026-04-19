@@ -189,7 +189,9 @@ print("\n" + "=" * 70)
 print("7. 最优模型测试集评估（按 CV F1 选出，仅此一次）")
 print("=" * 70)
 
-best_name = cv_df.iloc[0]["模型"]
+# 诊断图固定展示最优逻辑回归模型（报告模板主题为逻辑回归）
+lr_df = cv_df[cv_df["模型"].str.startswith("LogisticRegression")]
+best_name = lr_df.iloc[0]["模型"]
 best_model = models[best_name]
 best_model.fit(X_train_s, y_train)
 
