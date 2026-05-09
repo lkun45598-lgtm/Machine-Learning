@@ -1,0 +1,333 @@
+
+======================================================================
+Step 1: load iris dataset
+======================================================================
+数据集形状: (150, 6)
+
+前 5 个样本:
+   sepal length (cm)  sepal width (cm)  ...  target  species
+0                5.1               3.5  ...       0   setosa
+1                4.9               3.0  ...       0   setosa
+2                4.7               3.2  ...       0   setosa
+3                4.6               3.1  ...       0   setosa
+4                5.0               3.6  ...       0   setosa
+
+[5 rows x 6 columns]
+
+各列缺失值数量:
+sepal length (cm)    0
+sepal width (cm)     0
+petal length (cm)    0
+petal width (cm)     0
+target               0
+species              0
+dtype: int64
+
+训练集大小: (120, 4), 测试集大小: (30, 4)
+
+======================================================================
+Step 2: entropy criterion grid
+======================================================================
+
+[step2_entropy] train/test accuracy across max_depth x min_samples_leaf:
+max_depth  min_samples_leaf  train_acc  test_acc
+        2                 8     0.9667    0.9333
+        2                 6     0.9667    0.9333
+        2                 4     0.9667    0.9333
+        2                 2     0.9667    0.9333
+        2                 1     0.9667    0.9333
+        5                 8     0.9667    0.9333
+        5                 6     0.9667    0.9333
+        5                 4     0.9833    0.9667
+        5                 2     0.9833    0.9333
+        5                 1     1.0000    0.9333
+       10                 8     0.9667    0.9333
+       10                 6     0.9667    0.9333
+       10                 4     0.9833    0.9667
+       10                 2     0.9833    0.9333
+       10                 1     1.0000    0.9333
+       15                 8     0.9667    0.9333
+       15                 6     0.9667    0.9333
+       15                 4     0.9833    0.9667
+       15                 2     0.9833    0.9333
+       15                 1     1.0000    0.9333
+     None                 8     0.9667    0.9333
+     None                 6     0.9667    0.9333
+     None                 4     0.9833    0.9667
+     None                 2     0.9833    0.9333
+     None                 1     1.0000    0.9333
+
+[step2_entropy] test accuracy pivot (rows=max_depth, cols=min_samples_leaf):
+min_samples_leaf       8       6       4       2       1
+max_depth                                               
+2                 0.9333  0.9333  0.9333  0.9333  0.9333
+5                 0.9333  0.9333  0.9667  0.9333  0.9333
+10                0.9333  0.9333  0.9667  0.9333  0.9333
+15                0.9333  0.9333  0.9667  0.9333  0.9333
+None              0.9333  0.9333  0.9667  0.9333  0.9333
+
+[step2_entropy] best: max_depth=5 min_samples_leaf=4 train_acc=0.9833 test_acc=0.9667
+[step2_entropy] best model confusion matrix on test set:
+            setosa  versicolor  virginica
+setosa          10           0          0
+versicolor       0           9          1
+virginica        0           0         10
+
+======================================================================
+Step 3: gini criterion grid
+======================================================================
+
+[step3_gini] train/test accuracy across max_depth x min_samples_leaf:
+max_depth  min_samples_leaf  train_acc  test_acc
+        2                 8     0.9667    0.9333
+        2                 6     0.9667    0.9333
+        2                 4     0.9667    0.9333
+        2                 2     0.9667    0.9333
+        2                 1     0.9667    0.9333
+        5                 8     0.9667    0.9333
+        5                 6     0.9667    0.9333
+        5                 4     0.9833    0.9667
+        5                 2     0.9833    0.9333
+        5                 1     1.0000    0.9333
+       10                 8     0.9667    0.9333
+       10                 6     0.9667    0.9333
+       10                 4     0.9833    0.9667
+       10                 2     0.9833    0.9333
+       10                 1     1.0000    0.9333
+       15                 8     0.9667    0.9333
+       15                 6     0.9667    0.9333
+       15                 4     0.9833    0.9667
+       15                 2     0.9833    0.9333
+       15                 1     1.0000    0.9333
+     None                 8     0.9667    0.9333
+     None                 6     0.9667    0.9333
+     None                 4     0.9833    0.9667
+     None                 2     0.9833    0.9333
+     None                 1     1.0000    0.9333
+
+[step3_gini] test accuracy pivot (rows=max_depth, cols=min_samples_leaf):
+min_samples_leaf       8       6       4       2       1
+max_depth                                               
+2                 0.9333  0.9333  0.9333  0.9333  0.9333
+5                 0.9333  0.9333  0.9667  0.9333  0.9333
+10                0.9333  0.9333  0.9667  0.9333  0.9333
+15                0.9333  0.9333  0.9667  0.9333  0.9333
+None              0.9333  0.9333  0.9667  0.9333  0.9333
+
+[step3_gini] best: max_depth=5 min_samples_leaf=4 train_acc=0.9833 test_acc=0.9667
+[step3_gini] best model confusion matrix on test set:
+            setosa  versicolor  virginica
+setosa          10           0          0
+versicolor       0           9          1
+virginica        0           0         10
+
+======================================================================
+Step 4: introduce missing values into training set
+======================================================================
+训练集形状: (120, 4)
+
+训练集各特征缺失值数量:
+sepal length (cm)    20
+sepal width (cm)     20
+petal length (cm)    20
+petal width (cm)     20
+dtype: int64
+
+训练集中含至少一个缺失值的样本数: 63
+测试集不引入缺失值，保持原始数据。
+
+======================================================================
+Step 5: missing-value strategies (drop / mean / KNN), gini criterion
+======================================================================
+
+[drop] 丢弃后训练集大小: (57, 4)
+
+[step5_drop] train/test accuracy across max_depth x min_samples_leaf:
+max_depth  min_samples_leaf  train_acc  test_acc
+        2                 8     0.9649    0.9000
+        2                 6     0.9649    0.9000
+        2                 4     0.9649    0.9000
+        2                 2     0.9649    0.9000
+        2                 1     0.9649    0.9000
+        5                 8     0.9649    0.9000
+        5                 6     0.9649    0.9000
+        5                 4     0.9649    0.9000
+        5                 2     0.9825    0.9667
+        5                 1     1.0000    0.9667
+       10                 8     0.9649    0.9000
+       10                 6     0.9649    0.9000
+       10                 4     0.9649    0.9000
+       10                 2     0.9825    0.9667
+       10                 1     1.0000    0.9667
+       15                 8     0.9649    0.9000
+       15                 6     0.9649    0.9000
+       15                 4     0.9649    0.9000
+       15                 2     0.9825    0.9667
+       15                 1     1.0000    0.9667
+     None                 8     0.9649    0.9000
+     None                 6     0.9649    0.9000
+     None                 4     0.9649    0.9000
+     None                 2     0.9825    0.9667
+     None                 1     1.0000    0.9667
+
+[step5_drop] test accuracy pivot (rows=max_depth, cols=min_samples_leaf):
+min_samples_leaf    8    6    4       2       1
+max_depth                                      
+2                 0.9  0.9  0.9  0.9000  0.9000
+5                 0.9  0.9  0.9  0.9667  0.9667
+10                0.9  0.9  0.9  0.9667  0.9667
+15                0.9  0.9  0.9  0.9667  0.9667
+None              0.9  0.9  0.9  0.9667  0.9667
+
+[step5_drop] best: max_depth=5 min_samples_leaf=2 train_acc=0.9825 test_acc=0.9667
+[step5_drop] best model confusion matrix on test set:
+            setosa  versicolor  virginica
+setosa          10           0          0
+versicolor       0           9          1
+virginica        0           0         10
+
+[step5_mean] train/test accuracy across max_depth x min_samples_leaf:
+max_depth  min_samples_leaf  train_acc  test_acc
+        2                 8     0.8583    0.9333
+        2                 6     0.8583    0.9333
+        2                 4     0.8583    0.9333
+        2                 2     0.8583    0.9333
+        2                 1     0.8583    0.9333
+        5                 8     0.9083    0.9000
+        5                 6     0.9500    0.9667
+        5                 4     0.9500    0.9667
+        5                 2     0.9500    0.9333
+        5                 1     0.9667    0.9333
+       10                 8     0.9083    0.9000
+       10                 6     0.9500    0.9667
+       10                 4     0.9500    0.9667
+       10                 2     0.9667    0.9333
+       10                 1     1.0000    0.9667
+       15                 8     0.9083    0.9000
+       15                 6     0.9500    0.9667
+       15                 4     0.9500    0.9667
+       15                 2     0.9667    0.9333
+       15                 1     1.0000    0.9667
+     None                 8     0.9083    0.9000
+     None                 6     0.9500    0.9667
+     None                 4     0.9500    0.9667
+     None                 2     0.9667    0.9333
+     None                 1     1.0000    0.9667
+
+[step5_mean] test accuracy pivot (rows=max_depth, cols=min_samples_leaf):
+min_samples_leaf       8       6       4       2       1
+max_depth                                               
+2                 0.9333  0.9333  0.9333  0.9333  0.9333
+5                 0.9000  0.9667  0.9667  0.9333  0.9333
+10                0.9000  0.9667  0.9667  0.9333  0.9667
+15                0.9000  0.9667  0.9667  0.9333  0.9667
+None              0.9000  0.9667  0.9667  0.9333  0.9667
+
+[step5_mean] best: max_depth=5 min_samples_leaf=6 train_acc=0.9500 test_acc=0.9667
+[step5_mean] best model confusion matrix on test set:
+            setosa  versicolor  virginica
+setosa          10           0          0
+versicolor       0           9          1
+virginica        0           0         10
+
+[step5_knn] train/test accuracy across max_depth x min_samples_leaf:
+max_depth  min_samples_leaf  train_acc  test_acc
+        2                 8     0.9500    0.9333
+        2                 6     0.9500    0.9333
+        2                 4     0.9500    0.9333
+        2                 2     0.9500    0.9333
+        2                 1     0.9500    0.9333
+        5                 8     0.9500    0.9333
+        5                 6     0.9500    0.9333
+        5                 4     0.9500    0.8667
+        5                 2     0.9667    0.9000
+        5                 1     0.9833    0.9000
+       10                 8     0.9500    0.9333
+       10                 6     0.9500    0.9333
+       10                 4     0.9500    0.8667
+       10                 2     0.9667    0.9000
+       10                 1     1.0000    0.9000
+       15                 8     0.9500    0.9333
+       15                 6     0.9500    0.9333
+       15                 4     0.9500    0.8667
+       15                 2     0.9667    0.9000
+       15                 1     1.0000    0.9000
+     None                 8     0.9500    0.9333
+     None                 6     0.9500    0.9333
+     None                 4     0.9500    0.8667
+     None                 2     0.9667    0.9000
+     None                 1     1.0000    0.9000
+
+[step5_knn] test accuracy pivot (rows=max_depth, cols=min_samples_leaf):
+min_samples_leaf       8       6       4       2       1
+max_depth                                               
+2                 0.9333  0.9333  0.9333  0.9333  0.9333
+5                 0.9333  0.9333  0.8667  0.9000  0.9000
+10                0.9333  0.9333  0.8667  0.9000  0.9000
+15                0.9333  0.9333  0.8667  0.9000  0.9000
+None              0.9333  0.9333  0.8667  0.9000  0.9000
+
+[step5_knn] best: max_depth=2 min_samples_leaf=8 train_acc=0.9500 test_acc=0.9333
+[step5_knn] best model confusion matrix on test set:
+            setosa  versicolor  virginica
+setosa          10           0          0
+versicolor       0           9          1
+virginica        0           1          9
+
+======================================================================
+Step 6: missing-value marking (-1), gini criterion
+======================================================================
+用 -1.0 标记缺失值；训练集形状: (120, 4)
+
+[step6_mark] train/test accuracy across max_depth x min_samples_leaf:
+max_depth  min_samples_leaf  train_acc  test_acc
+        2                 8     0.8917    0.9333
+        2                 6     0.8917    0.9333
+        2                 4     0.8917    0.9333
+        2                 2     0.8917    0.9333
+        2                 1     0.8917    0.9333
+        5                 8     0.9167    0.9667
+        5                 6     0.9583    0.9667
+        5                 4     0.9667    0.9667
+        5                 2     0.9667    0.9333
+        5                 1     0.9917    0.9333
+       10                 8     0.9167    0.9667
+       10                 6     0.9583    0.9667
+       10                 4     0.9667    0.9667
+       10                 2     0.9667    0.9333
+       10                 1     1.0000    0.9667
+       15                 8     0.9167    0.9667
+       15                 6     0.9583    0.9667
+       15                 4     0.9667    0.9667
+       15                 2     0.9667    0.9333
+       15                 1     1.0000    0.9667
+     None                 8     0.9167    0.9667
+     None                 6     0.9583    0.9667
+     None                 4     0.9667    0.9667
+     None                 2     0.9667    0.9333
+     None                 1     1.0000    0.9667
+
+[step6_mark] test accuracy pivot (rows=max_depth, cols=min_samples_leaf):
+min_samples_leaf       8       6       4       2       1
+max_depth                                               
+2                 0.9333  0.9333  0.9333  0.9333  0.9333
+5                 0.9667  0.9667  0.9667  0.9333  0.9333
+10                0.9667  0.9667  0.9667  0.9333  0.9667
+15                0.9667  0.9667  0.9667  0.9333  0.9667
+None              0.9667  0.9667  0.9667  0.9333  0.9667
+
+[step6_mark] best: max_depth=5 min_samples_leaf=8 train_acc=0.9167 test_acc=0.9667
+[step6_mark] best model confusion matrix on test set:
+            setosa  versicolor  virginica
+setosa          10           0          0
+versicolor       0           9          1
+virginica        0           0         10
+
+======================================================================
+Step 7: visualize best trees from step 2 / step 3
+======================================================================
+saved: best_entropy_tree.png
+saved: best_gini_tree.png
+
+All outputs written to: /data1/user/lz/ML/week5/outputs
+

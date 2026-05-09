@@ -12,6 +12,7 @@ Machine-Learning/
 ├── week2/          # 实验二：分类算法实现乳腺癌良恶性预测
 ├── week3/          # 实验三：基于支持向量机的手写数字识别
 ├── week4/          # 实验四：基于支持向量机回归的共享单车骑行量预测
+├── week5/          # 实验五：基于决策树的鸢尾花分类
 └── ...
 ```
 
@@ -23,6 +24,7 @@ Machine-Learning/
 | Week 2 | 乳腺癌良恶性分类 | LogisticRegression / KNN / SVM / DecisionTree / RandomForest / GaussianNB |
 | Week 3 | 手写数字识别 | SVM (linear / poly / rbf / sigmoid) + GridSearchCV |
 | Week 4 | 共享单车骑行量预测 | SVR (RBF) + SelectKBest + GridSearchCV (C / gamma / epsilon) |
+| Week 5 | 鸢尾花分类 | DecisionTreeClassifier (entropy / gini) + 缺失值处理（丢弃 / 均值 / KNN / 标记） |
 
 ---
 
