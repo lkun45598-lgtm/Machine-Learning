@@ -172,16 +172,17 @@ X_tr_drop, y_tr_drop = X_train_missing[mask], y_train[mask]
 print(f"\n[drop] 丢弃后训练集大小: {X_tr_drop.shape}")
 sweep(X_tr_drop, y_tr_drop, X_test, y_test, "gini", "step5_drop")
 
-# 5b 均值填充：仅用训练集统计量 fit
+# 5b 均值填充：仅用训练集统计量 fit，训练集 / 测试集都用同一 imputer transform
 mean_imp = SimpleImputer(strategy="mean")
 X_tr_mean = mean_imp.fit_transform(X_train_missing)
-X_te_mean = X_test  # 测试集本身无缺失，但保持接口一致
+X_te_mean = mean_imp.transform(X_test)
 sweep(X_tr_mean, y_train, X_te_mean, y_test, "gini", "step5_mean")
 
-# 5c KNN 填充
+# 5c KNN 填充：同样仅 fit 训练集
 knn_imp = KNNImputer(n_neighbors=5)
 X_tr_knn = knn_imp.fit_transform(X_train_missing)
-sweep(X_tr_knn, y_train, X_test, y_test, "gini", "step5_knn")
+X_te_knn = knn_imp.transform(X_test)
+sweep(X_tr_knn, y_train, X_te_knn, y_test, "gini", "step5_knn")
 
 
 # -----------------------------------------------------------------------------
@@ -190,9 +191,11 @@ sweep(X_tr_knn, y_train, X_test, y_test, "gini", "step5_knn")
 header("Step 6: missing-value marking (-1), gini criterion")
 
 MARK_VALUE = -1.0
-X_tr_mark = np.where(np.isnan(X_train_missing), MARK_VALUE, X_train_missing)
+mark_imp = SimpleImputer(strategy="constant", fill_value=MARK_VALUE)
+X_tr_mark = mark_imp.fit_transform(X_train_missing)
+X_te_mark = mark_imp.transform(X_test)
 print(f"用 {MARK_VALUE} 标记缺失值；训练集形状: {X_tr_mark.shape}")
-sweep(X_tr_mark, y_train, X_test, y_test, "gini", "step6_mark")
+sweep(X_tr_mark, y_train, X_te_mark, y_test, "gini", "step6_mark")
 
 
 # -----------------------------------------------------------------------------
