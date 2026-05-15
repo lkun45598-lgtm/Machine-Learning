@@ -13,6 +13,7 @@ Machine-Learning/
 ├── week3/          # 实验三：基于支持向量机的手写数字识别
 ├── week4/          # 实验四：基于支持向量机回归的共享单车骑行量预测
 ├── week5/          # 实验五：基于决策树的鸢尾花分类
+├── week6/          # 实验六：随机森林、XGBoost 预测糖尿病
 └── ...
 ```
 
@@ -25,8 +26,9 @@ Machine-Learning/
 | Week 3 | 手写数字识别 | SVM (linear / poly / rbf / sigmoid) + GridSearchCV |
 | Week 4 | 共享单车骑行量预测 | SVR (RBF) + SelectKBest + GridSearchCV (C / gamma / epsilon) |
 | Week 5 | 鸢尾花分类 | DecisionTreeClassifier (entropy / gini) + 缺失值处理（丢弃 / 均值 / KNN / 标记） |
+| Week 6 | 糖尿病预测 | RandomForest + XGBoost + GridSearchCV (9 维超参) + 特征重要性对比 |
 
 ---
 
 > 运行环境：Python 3.x，conda 环境 `pytorch`
-> 依赖：pandas / numpy / matplotlib / scikit-learn
+> 依赖：pandas / numpy / matplotlib / scikit-learn / xgboost
