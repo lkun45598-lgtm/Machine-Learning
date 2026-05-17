@@ -13,33 +13,35 @@ Pima Indians Diabetes Dataset（`diabetes.csv`，768 条样本 × 8 个特征 + 
 1. 加载数据，查看形状 / 前 5 行 / 数据类型 / NaN 数 / 各列 `0` 的数量 / 类别分布
 2. 把 5 列不合生理常识的 `0` 替换为 NaN，再 `train_test_split` 8:2 (stratify=y)，**仅用训练集的中位数**做 `SimpleImputer` 填充
 3. 默认参数 `RandomForestClassifier` 训练 + 评估（模型参数、训练 / 测试集混淆矩阵、分类报告）
-4. 网格遍历 `n_estimators ∈ {100, 200, 400}` × `max_depth ∈ {3, 5, 8, None}` × `min_samples_split ∈ {2, 5, 10}`（共 36 组），选 test_acc 最高的为最优模型
+4. RF 网格调参 `n_estimators ∈ {100, 200, 400}` × `max_depth ∈ {3, 5, 8, None}` × `min_samples_split ∈ {2, 5, 10}`（共 36 组）— **在训练集内用 `StratifiedKFold(3)` 交叉验证选最优**，测试集只在最后评估一次，避免测试集泄漏
 5. 原数据 `0` 设为 NaN（不做填充，XGBoost 内部用 `missing=nan` 处理），切分后用默认 `XGBClassifier` 训练 + 评估
 6. 在步骤 5 基础上做 9 维参数网格搜索（`learning_rate`、`n_estimators`、`max_depth`、`min_child_weight`、`subsample`、`colsample_bytree`、`gamma`、`reg_alpha`、`reg_lambda`，每维 2 个取值共 512 组），3 折 `StratifiedKFold`、`accuracy` 评分，输出 CV 最优参数 + 测试集表现
 7. 步骤 4 与步骤 6 的最优模型特征重要性对比，柱状图可视化
 
 > 数据预处理顺序：先 `train_test_split`，再仅用训练集统计量做填充，避免数据泄漏。
+> 调参原则：模型选择只能用训练集（含其内部的 CV 折），测试集只作为最终评估一次。
 
 ## 主要结果
 
 | 模型 | 关键参数 | Train Acc | Test Acc |
 |---|---|---|---|
 | RF default | n_estimators=100, max_depth=None, min_samples_split=2 | 1.0000 | 0.7662 |
-| RF best    | n_estimators=100, max_depth=None, min_samples_split=2 | 1.0000 | 0.7662 |
+| RF best (CV) | n_estimators=200, max_depth=5, min_samples_split=5 | 0.8550 | 0.7403 |
 | XGB default| 库默认 (objective=binary:logistic, missing=NaN) | 1.0000 | 0.7338 |
 | XGB best   | lr=0.05, n_est=100, max_depth=3, min_child_weight=1, subsample=0.8, colsample_bytree=1.0, gamma=0, reg_alpha=0.1, reg_lambda=1.0 | 0.8550 | 0.7532 |
 
-XGBoost 网格搜索 best CV acc = **0.7867**。
+- RF 网格 CV 最佳 `cv_val_acc = 0.7818`（n_est=200, max_depth=5, min_samples_split=5）
+- XGB 网格 CV 最佳 `cv_acc = 0.7867`
 
-随机森林网格搜索最佳组合与默认参数完全一致（test_acc=0.7662），说明在该数据上 sklearn 的 RF 默认配置已较接近最优；但 `train_acc=1.0` 表明仍存在明显过拟合。
+RF 默认参数 `train_acc=1.0000` 是典型的完全过拟合；网格搜索（基于 CV）选出的 max_depth=5 的较浅森林把 train_acc 拉回到 0.855，测试集上 0.7403 才是诚实的泛化估计——比表面上"好看"的 0.7662 更可信，因为前者没有偷看测试集。
 
 XGBoost 在网格搜索后，训练 / 测试准确率从 (1.0000 / 0.7338) 收敛到 (0.8550 / 0.7532)——**正则化（小学习率 + 浅树 + 子采样 + L1 / L2）显著降低了过拟合**，泛化能力变好。
 
-特征重要性两个模型基本一致：**Glucose > BMI > Age / DiabetesPedigreeFunction > Insulin / BloodPressure > Pregnancies > SkinThickness**。其中 `DiabetesPedigreeFunction` 在 RF 中排第 3、XGB 中排第 6，是两个模型分歧最大的特征。
+特征重要性两个模型基本一致：**Glucose > BMI > Age > Insulin > Pregnancies / DPF > SkinThickness / BloodPressure**。Glucose 在两个模型中都是压倒性的第 1 名（RF 0.37、XGB 0.32），BMI 稳居第 2。差异最大的是 `BloodPressure`：RF 排第 8（最低），XGB 排第 5。
 
 ## 输出文件
 
-- `step4_rf_grid.csv`：步骤 4 RF 网格 36 组的 train / test 准确率
+- `step4_rf_grid.csv`：步骤 4 RF 网格 36 组的 cv_train / cv_val 平均准确率
 - `step6_xgb_grid.csv`：步骤 6 XGB 512 组 GridSearchCV 的全部 cv 结果
 - `step7_feature_importance.csv`：两个最优模型的特征重要性 + 排名
 - `summary.csv`：四个模型 train / test acc 汇总

@@ -1,5 +1,5 @@
 model,train_acc,test_acc
 RF default,1.0,0.7662
-RF best,1.0,0.7662
+RF best,0.855,0.7403
 XGB default,1.0,0.7338
 XGB best,0.855,0.7532

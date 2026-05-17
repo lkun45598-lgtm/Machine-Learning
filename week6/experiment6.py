@@ -122,43 +122,46 @@ rf_default_tr_acc, rf_default_te_acc = print_eval(
 
 
 # =============================================================================
-# Step 4: 调参随机森林（n_estimators × max_depth × min_samples_split）
+# Step 4: 随机森林调参（n_estimators × max_depth × min_samples_split）
+#         用训练集 StratifiedKFold(3) 交叉验证选最优，测试集只在最后评估一次
 # =============================================================================
-print("\n" + "=" * 70 + "\nStep 4: tuned RandomForest grid\n" + "=" * 70)
+print("\n" + "=" * 70 + "\nStep 4: tuned RandomForest with train-only CV\n" + "=" * 70)
 
 RF_N_ESTIMATORS = [100, 200, 400]
 RF_MAX_DEPTHS = [3, 5, 8, None]
 RF_MIN_SPLITS = [2, 5, 10]
+rf_cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=RANDOM_STATE)
 
 rf_rows = []
-best_rf_acc = -1.0
-best_rf = None
+best_rf_cv_acc = -1.0
 best_rf_params = None
 
 for n_est, depth, msp in product(RF_N_ESTIMATORS, RF_MAX_DEPTHS, RF_MIN_SPLITS):
-    clf = RandomForestClassifier(
-        n_estimators=n_est, max_depth=depth, min_samples_split=msp,
-        random_state=RANDOM_STATE, n_jobs=-1,
-    )
-    clf.fit(X_train, y_train)
-    tr_acc = accuracy_score(y_train, clf.predict(X_train))
-    te_acc = accuracy_score(y_test, clf.predict(X_test))
+    tr_scores, val_scores = [], []
+    for tr_idx, val_idx in rf_cv.split(X_train, y_train):
+        clf = RandomForestClassifier(
+            n_estimators=n_est, max_depth=depth, min_samples_split=msp,
+            random_state=RANDOM_STATE, n_jobs=-1,
+        )
+        clf.fit(X_train[tr_idx], y_train[tr_idx])
+        tr_scores.append(accuracy_score(y_train[tr_idx], clf.predict(X_train[tr_idx])))
+        val_scores.append(accuracy_score(y_train[val_idx], clf.predict(X_train[val_idx])))
+    mean_tr, mean_val = float(np.mean(tr_scores)), float(np.mean(val_scores))
     rf_rows.append({
         "n_estimators": n_est,
         "max_depth": "None" if depth is None else depth,
         "min_samples_split": msp,
-        "train_acc": round(tr_acc, 4),
-        "test_acc": round(te_acc, 4),
+        "cv_train_acc": round(mean_tr, 4),
+        "cv_val_acc": round(mean_val, 4),
     })
-    if te_acc > best_rf_acc:
-        best_rf_acc = te_acc
-        best_rf = clf
+    if mean_val > best_rf_cv_acc:
+        best_rf_cv_acc = mean_val
         best_rf_params = (n_est, depth, msp)
 
 rf_table = pd.DataFrame(rf_rows).sort_values(
-    by=["test_acc", "train_acc"], ascending=[False, False]
+    by=["cv_val_acc", "cv_train_acc"], ascending=[False, False]
 ).reset_index(drop=True)
-print("\n[rf_grid] train/test accuracy across grid (top 10 by test_acc):")
+print("\n[rf_cv_grid] mean CV train/val accuracy across grid (top 10 by cv_val_acc):")
 print(rf_table.head(10).to_string(index=False))
 rf_table.to_csv(OUT_DIR / "step4_rf_grid.csv", index=False)
 
@@ -166,11 +169,21 @@ print(
     f"\n[rf_best] n_estimators={best_rf_params[0]}, "
     f"max_depth={best_rf_params[1]}, "
     f"min_samples_split={best_rf_params[2]}, "
-    f"test_acc={best_rf_acc:.4f}"
+    f"cv_val_acc={best_rf_cv_acc:.4f}"
 )
+
+best_rf = RandomForestClassifier(
+    n_estimators=best_rf_params[0],
+    max_depth=best_rf_params[1],
+    min_samples_split=best_rf_params[2],
+    random_state=RANDOM_STATE, n_jobs=-1,
+)
+best_rf.fit(X_train, y_train)
 print("\n[rf_best] 模型参数:")
 print(best_rf.get_params())
-print_eval("rf_best", best_rf, X_train, y_train, X_test, y_test)
+rf_best_tr_acc, rf_best_te_acc = print_eval(
+    "rf_best", best_rf, X_train, y_train, X_test, y_test
+)
 
 
 # =============================================================================
@@ -307,8 +320,7 @@ print("saved: feature_importance.png")
 print("\n" + "=" * 70 + "\nSummary\n" + "=" * 70)
 summary = pd.DataFrame([
     {"model": "RF default",  "train_acc": rf_default_tr_acc,  "test_acc": rf_default_te_acc},
-    {"model": "RF best",     "train_acc": accuracy_score(y_train, best_rf.predict(X_train)),
-                              "test_acc": best_rf_acc},
+    {"model": "RF best",     "train_acc": rf_best_tr_acc,     "test_acc": rf_best_te_acc},
     {"model": "XGB default", "train_acc": xgb_default_tr_acc, "test_acc": xgb_default_te_acc},
     {"model": "XGB best",    "train_acc": xgb_best_tr_acc,    "test_acc": xgb_best_te_acc},
 ])

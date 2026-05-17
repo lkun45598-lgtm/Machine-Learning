@@ -108,58 +108,58 @@ weighted avg     0.7610    0.7662    0.7614       154
 
 
 ======================================================================
-Step 4: tuned RandomForest grid
+Step 4: tuned RandomForest with train-only CV
 ======================================================================
 
-[rf_grid] train/test accuracy across grid (top 10 by test_acc):
- n_estimators max_depth  min_samples_split  train_acc  test_acc
-          100      None                  2     1.0000    0.7662
-          400      None                  5     0.9870    0.7532
-          200         8                  2     0.9511    0.7532
-          400         8                  2     0.9511    0.7532
-          400      None                 10     0.9511    0.7532
-          100         8                  5     0.9267    0.7532
-          400         8                 10     0.9121    0.7532
-          100      None                  5     0.9902    0.7468
-          200      None                  5     0.9870    0.7468
-          200      None                 10     0.9479    0.7468
+[rf_cv_grid] mean CV train/val accuracy across grid (top 10 by cv_val_acc):
+ n_estimators max_depth  min_samples_split  cv_train_acc  cv_val_acc
+          200         8                  2        0.9772      0.7818
+          400         5                  2        0.8722      0.7818
+          200         5                  5        0.8721      0.7818
+          400      None                  2        1.0000      0.7817
+          200         5                  2        0.8754      0.7802
+          100         5                  5        0.8746      0.7802
+          100         5                 10        0.8591      0.7802
+          200         8                  5        0.9536      0.7801
+          400         8                 10        0.9267      0.7801
+          400         5                 10        0.8632      0.7801
 
-[rf_best] n_estimators=100, max_depth=None, min_samples_split=2, test_acc=0.7662
+[rf_best] n_estimators=200, max_depth=5, min_samples_split=5, cv_val_acc=0.7818
 
 [rf_best] 模型参数:
-{'bootstrap': True, 'ccp_alpha': 0.0, 'class_weight': None, 'criterion': 'gini', 'max_depth': None, 'max_features': 'sqrt', 'max_leaf_nodes': None, 'max_samples': None, 'min_impurity_decrease': 0.0, 'min_samples_leaf': 1, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'monotonic_cst': None, 'n_estimators': 100, 'n_jobs': -1, 'oob_score': False, 'random_state': 42, 'verbose': 0, 'warm_start': False}
+{'bootstrap': True, 'ccp_alpha': 0.0, 'class_weight': None, 'criterion': 'gini', 'max_depth': 5, 'max_features': 'sqrt', 'max_leaf_nodes': None, 'max_samples': None, 'min_impurity_decrease': 0.0, 'min_samples_leaf': 1, 'min_samples_split': 5, 'min_weight_fraction_leaf': 0.0, 'monotonic_cst': None, 'n_estimators': 200, 'n_jobs': -1, 'oob_score': False, 'random_state': 42, 'verbose': 0, 'warm_start': False}
 
-[rf_best] train acc = 1.0000, test acc = 0.7662
+[rf_best] train acc = 0.8550, test acc = 0.7403
 
 [rf_best] train confusion matrix:
                    pred_non-diabetic  pred_diabetic
-true_non-diabetic                400              0
-true_diabetic                      0            214
+true_non-diabetic                379             21
+true_diabetic                     68            146
 
 [rf_best] test confusion matrix:
                    pred_non-diabetic  pred_diabetic
 true_non-diabetic                 86             14
-true_diabetic                     22             32
+true_diabetic                     26             28
 
 [rf_best] train classification report:
               precision    recall  f1-score   support
 
-non-diabetic     1.0000    1.0000    1.0000       400
-    diabetic     1.0000    1.0000    1.0000       214
+non-diabetic     0.8479    0.9475    0.8949       400
+    diabetic     0.8743    0.6822    0.7664       214
 
-    accuracy                         1.0000       614
-   macro avg     1.0000    1.0000    1.0000       614
-weighted avg     1.0000    1.0000    1.0000       614
+    accuracy                         0.8550       614
+   macro avg     0.8611    0.8149    0.8307       614
+weighted avg     0.8571    0.8550    0.8501       614
 
 [rf_best] test classification report:
               precision    recall  f1-score   support
 
-non-diabetic     0.7963    0.8600    0.8269       100
-    diabetic     0.6957    0.5926    0.6400        54
+non-diabetic     0.7679    0.8600    0.8113       100
+    diabetic     0.6667    0.5185    0.5833        54
 
-    accuracy                         0.7662       154
-   macro avg     0.7460    0.7263    0.7335       154
-weighted avg     0.7610    0.7662    0.7614       154
+    accuracy                         0.7403       154
+   macro avg     0.7173    0.6893    0.6973       154
+weighted avg     0.7324    0.7403    0.7314       154
 
 
 ======================================================================
@@ -276,14 +276,14 @@ Step 7: feature importance comparison (RF best vs XGB best)
 
 [importance] 特征重要性对比表:
                  feature  rf_best_importance  xgb_best_importance  rf_rank  xgb_rank
-             Pregnancies            0.080793             0.077264        7         7
-                 Glucose            0.272616             0.316886        1         1
-           BloodPressure            0.084337             0.083964        6         5
-           SkinThickness            0.071187             0.075024        8         8
-                 Insulin            0.089395             0.085537        5         4
-                     BMI            0.163688             0.161241        2         2
-DiabetesPedigreeFunction            0.124927             0.083815        3         6
-                     Age            0.113057             0.116268        4         3
+             Pregnancies            0.062185             0.077264        6         7
+                 Glucose            0.365586             0.316886        1         1
+           BloodPressure            0.043832             0.083964        8         5
+           SkinThickness            0.056113             0.075024        7         8
+                 Insulin            0.099892             0.085537        4         4
+                     BMI            0.169962             0.161241        2         2
+DiabetesPedigreeFunction            0.079375             0.083815        5         6
+                     Age            0.123057             0.116268        3         3
 saved: feature_importance.png
 
 ======================================================================
@@ -291,7 +291,7 @@ Summary
 ======================================================================
       model  train_acc  test_acc
  RF default      1.000    0.7662
-    RF best      1.000    0.7662
+    RF best      0.855    0.7403
 XGB default      1.000    0.7338
    XGB best      0.855    0.7532
 
