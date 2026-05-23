@@ -3,3 +3,6 @@
 __pycache__/
 *.pyc
 .DS_Store
+
+# Week 7: 数据压缩包已入库，解压目录不上传
+week7/svhn_8k/

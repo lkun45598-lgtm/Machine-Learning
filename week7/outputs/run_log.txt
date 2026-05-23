@@ -1,0 +1,210 @@
+
+======================================================================
+Step 1: scan svhn_8k, parse labels from filename, split 80/20
+======================================================================
+device: cuda
+共扫描到 8000 张图片
+类别分布:
+  class 0: 563
+  class 1: 1527
+  class 2: 1137
+  class 3: 928
+  class 4: 858
+  class 5: 757
+  class 6: 607
+  class 7: 566
+  class 8: 556
+  class 9: 501
+
+训练集: 6400 张，测试集: 1600 张
+
+======================================================================
+Step 2: transforms (train aug + test plain) and DataLoader
+======================================================================
+train_ds: 6400, test_ds: 1600
+saved: samples_per_class.png
+
+======================================================================
+Step 3: baseline ImprovedLeNet (lr=1e-3, batch=64, epochs=10)
+======================================================================
+ImprovedLeNet(
+  (conv1): Conv2d(3, 6, kernel_size=(5, 5), stride=(1, 1))
+  (pool1): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (conv2): Conv2d(6, 16, kernel_size=(5, 5), stride=(1, 1))
+  (pool2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (fc1): Linear(in_features=400, out_features=120, bias=True)
+  (fc2): Linear(in_features=120, out_features=84, bias=True)
+  (fc3): Linear(in_features=84, out_features=10, bias=True)
+)
+模型参数量: 62006
+  [baseline] epoch 01/10 train_loss=2.2373  train_acc=0.1873  test_acc=0.1913
+  [baseline] epoch 02/10 train_loss=2.0634  train_acc=0.2659  test_acc=0.4075
+  [baseline] epoch 03/10 train_loss=1.6168  train_acc=0.4577  test_acc=0.5994
+  [baseline] epoch 04/10 train_loss=1.3496  train_acc=0.5522  test_acc=0.6675
+  [baseline] epoch 05/10 train_loss=1.2163  train_acc=0.6142  test_acc=0.7406
+  [baseline] epoch 06/10 train_loss=1.0962  train_acc=0.6522  test_acc=0.7681
+  [baseline] epoch 07/10 train_loss=1.0201  train_acc=0.6834  test_acc=0.7794
+  [baseline] epoch 08/10 train_loss=0.9902  train_acc=0.6920  test_acc=0.8013
+  [baseline] epoch 09/10 train_loss=0.9451  train_acc=0.7037  test_acc=0.7969
+  [baseline] epoch 10/10 train_loss=0.8947  train_acc=0.7178  test_acc=0.8263
+baseline 训练耗时 24.8s
+ epoch  train_loss  train_acc  test_acc
+     1    2.237280   0.187344  0.191250
+     2    2.063375   0.265937  0.407500
+     3    1.616783   0.457656  0.599375
+     4    1.349605   0.552188  0.667500
+     5    1.216305   0.614219  0.740625
+     6    1.096228   0.652188  0.768125
+     7    1.020097   0.683438  0.779375
+     8    0.990210   0.692031  0.801250
+     9    0.945140   0.703750  0.796875
+    10    0.894732   0.717812  0.826250
+saved: step3_baseline_curves.png
+
+======================================================================
+Step 4: evaluate baseline on test set (CM + report + acc)
+======================================================================
+[baseline] test accuracy = 0.8263
+
+[baseline] test confusion matrix:
+        pred_0  pred_1  pred_2  pred_3  pred_4  pred_5  pred_6  pred_7  pred_8  pred_9
+true_0      91       2       2       0       3       0       6       1       2       6
+true_1       6     274       4       2       8       1       0       7       3       1
+true_2       1       4     202       1       0       4       0       9       1       5
+true_3       0       6       4     133       7      13       7       2      12       2
+true_4       0      10       3       7     147       0       0       0       2       3
+true_5       0       4       0       3       2     138       3       0       0       1
+true_6       0       6       0       3       5       7      95       0       5       0
+true_7       0       3       3       2       1       0       1     101       1       1
+true_8       1       4       2      10       5       7      11       0      66       5
+true_9       4       2       5       2       0       7       0       0       5      75
+
+[baseline] test classification report:
+              precision    recall  f1-score   support
+
+           0     0.8835    0.8053    0.8426       113
+           1     0.8698    0.8954    0.8824       306
+           2     0.8978    0.8899    0.8938       227
+           3     0.8160    0.7151    0.7622       186
+           4     0.8258    0.8547    0.8400       172
+           5     0.7797    0.9139    0.8415       151
+           6     0.7724    0.7851    0.7787       121
+           7     0.8417    0.8938    0.8670       113
+           8     0.6804    0.5946    0.6346       111
+           9     0.7576    0.7500    0.7538       100
+
+    accuracy                         0.8263      1600
+   macro avg     0.8125    0.8098    0.8097      1600
+weighted avg     0.8257    0.8263    0.8247      1600
+
+saved: step4_baseline_test_confusion.png
+
+======================================================================
+Step 5: LR sweep — lr ∈ {1e-4, 1e-3}, batch=64
+======================================================================
+
+--- 训练 lr=0.0001 ---
+  [lr=0.0001] epoch 01/10 train_loss=2.2688  train_acc=0.1623  test_acc=0.1913
+  [lr=0.0001] epoch 02/10 train_loss=2.2368  train_acc=0.1908  test_acc=0.1913
+  [lr=0.0001] epoch 03/10 train_loss=2.2272  train_acc=0.1908  test_acc=0.1913
+  [lr=0.0001] epoch 04/10 train_loss=2.2157  train_acc=0.1908  test_acc=0.1975
+  [lr=0.0001] epoch 05/10 train_loss=2.1950  train_acc=0.1967  test_acc=0.2112
+  [lr=0.0001] epoch 06/10 train_loss=2.1635  train_acc=0.2134  test_acc=0.2375
+  [lr=0.0001] epoch 07/10 train_loss=2.1120  train_acc=0.2455  test_acc=0.2794
+  [lr=0.0001] epoch 08/10 train_loss=2.0457  train_acc=0.2797  test_acc=0.3063
+  [lr=0.0001] epoch 09/10 train_loss=1.9756  train_acc=0.3187  test_acc=0.3531
+  [lr=0.0001] epoch 10/10 train_loss=1.9060  train_acc=0.3528  test_acc=0.3987
+
+--- 训练 lr=0.001 ---
+  [lr=0.001] epoch 01/10 train_loss=2.2373  train_acc=0.1873  test_acc=0.1913
+  [lr=0.001] epoch 02/10 train_loss=2.0443  train_acc=0.2766  test_acc=0.4469
+  [lr=0.001] epoch 03/10 train_loss=1.5980  train_acc=0.4631  test_acc=0.5894
+  [lr=0.001] epoch 04/10 train_loss=1.3504  train_acc=0.5470  test_acc=0.6587
+  [lr=0.001] epoch 05/10 train_loss=1.2228  train_acc=0.6162  test_acc=0.7388
+  [lr=0.001] epoch 06/10 train_loss=1.0982  train_acc=0.6509  test_acc=0.7606
+  [lr=0.001] epoch 07/10 train_loss=1.0321  train_acc=0.6784  test_acc=0.7769
+  [lr=0.001] epoch 08/10 train_loss=0.9994  train_acc=0.6920  test_acc=0.7919
+  [lr=0.001] epoch 09/10 train_loss=0.9698  train_acc=0.6894  test_acc=0.7969
+  [lr=0.001] epoch 10/10 train_loss=0.9202  train_acc=0.7084  test_acc=0.8187
+
+[lr_sweep] 每个 epoch 的训练 / 测试准确率:
+ epoch  train_acc_lr0.0001  train_acc_lr0.001  test_acc_lr0.0001  test_acc_lr0.001
+     1              0.1623             0.1873             0.1912            0.1912
+     2              0.1908             0.2766             0.1912            0.4469
+     3              0.1908             0.4631             0.1912            0.5894
+     4              0.1908             0.5470             0.1975            0.6587
+     5              0.1967             0.6162             0.2112            0.7388
+     6              0.2134             0.6509             0.2375            0.7606
+     7              0.2455             0.6784             0.2794            0.7769
+     8              0.2797             0.6920             0.3062            0.7919
+     9              0.3188             0.6894             0.3531            0.7969
+    10              0.3528             0.7084             0.3988            0.8188
+saved: step5_lr_sweep.png
+
+======================================================================
+Step 6: batch sweep — batch ∈ {32, 64, 128}, lr=1e-3
+======================================================================
+
+--- 训练 batch=32 ---
+  [bs=32] epoch 01/10 train_loss=2.2073  train_acc=0.1981  test_acc=0.3088
+  [bs=32] epoch 02/10 train_loss=1.6893  train_acc=0.4342  test_acc=0.5944
+  [bs=32] epoch 03/10 train_loss=1.3030  train_acc=0.5711  test_acc=0.7113
+  [bs=32] epoch 04/10 train_loss=1.1334  train_acc=0.6350  test_acc=0.7462
+  [bs=32] epoch 05/10 train_loss=1.0299  train_acc=0.6784  test_acc=0.7825
+  [bs=32] epoch 06/10 train_loss=0.9547  train_acc=0.7028  test_acc=0.8181
+  [bs=32] epoch 07/10 train_loss=0.8880  train_acc=0.7227  test_acc=0.8113
+  [bs=32] epoch 08/10 train_loss=0.8568  train_acc=0.7269  test_acc=0.8363
+  [bs=32] epoch 09/10 train_loss=0.7986  train_acc=0.7469  test_acc=0.8287
+  [bs=32] epoch 10/10 train_loss=0.7763  train_acc=0.7569  test_acc=0.8319
+
+--- 训练 batch=64 ---
+  [bs=64] epoch 01/10 train_loss=2.2373  train_acc=0.1873  test_acc=0.1913
+  [bs=64] epoch 02/10 train_loss=2.0551  train_acc=0.2727  test_acc=0.4487
+  [bs=64] epoch 03/10 train_loss=1.5868  train_acc=0.4653  test_acc=0.6062
+  [bs=64] epoch 04/10 train_loss=1.3359  train_acc=0.5591  test_acc=0.6725
+  [bs=64] epoch 05/10 train_loss=1.2128  train_acc=0.6180  test_acc=0.7406
+  [bs=64] epoch 06/10 train_loss=1.0998  train_acc=0.6503  test_acc=0.7662
+  [bs=64] epoch 07/10 train_loss=1.0242  train_acc=0.6816  test_acc=0.7744
+  [bs=64] epoch 08/10 train_loss=0.9935  train_acc=0.6853  test_acc=0.7981
+  [bs=64] epoch 09/10 train_loss=0.9603  train_acc=0.6952  test_acc=0.7875
+  [bs=64] epoch 10/10 train_loss=0.9111  train_acc=0.7087  test_acc=0.8169
+
+--- 训练 batch=128 ---
+  [bs=128] epoch 01/10 train_loss=2.2474  train_acc=0.1827  test_acc=0.1913
+  [bs=128] epoch 02/10 train_loss=2.2002  train_acc=0.1941  test_acc=0.2594
+  [bs=128] epoch 03/10 train_loss=1.9975  train_acc=0.3053  test_acc=0.3956
+  [bs=128] epoch 04/10 train_loss=1.7432  train_acc=0.4111  test_acc=0.4963
+  [bs=128] epoch 05/10 train_loss=1.5604  train_acc=0.4680  test_acc=0.5938
+  [bs=128] epoch 06/10 train_loss=1.4055  train_acc=0.5381  test_acc=0.6394
+  [bs=128] epoch 07/10 train_loss=1.3062  train_acc=0.5728  test_acc=0.6737
+  [bs=128] epoch 08/10 train_loss=1.2391  train_acc=0.6028  test_acc=0.7194
+  [bs=128] epoch 09/10 train_loss=1.1939  train_acc=0.6181  test_acc=0.7231
+  [bs=128] epoch 10/10 train_loss=1.1413  train_acc=0.6338  test_acc=0.7462
+
+[bs_sweep] 每个 epoch 的训练 / 测试准确率:
+ epoch  train_acc_bs32  train_acc_bs64  train_acc_bs128  test_acc_bs32  test_acc_bs64  test_acc_bs128
+     1          0.1981          0.1873           0.1827         0.3088         0.1912          0.1912
+     2          0.4342          0.2727           0.1941         0.5944         0.4488          0.2594
+     3          0.5711          0.4653           0.3053         0.7113         0.6062          0.3956
+     4          0.6350          0.5591           0.4111         0.7462         0.6725          0.4962
+     5          0.6784          0.6180           0.4680         0.7825         0.7406          0.5938
+     6          0.7028          0.6503           0.5381         0.8181         0.7662          0.6394
+     7          0.7227          0.6816           0.5728         0.8112         0.7744          0.6738
+     8          0.7269          0.6853           0.6028         0.8362         0.7981          0.7194
+     9          0.7469          0.6952           0.6181         0.8288         0.7875          0.7231
+    10          0.7569          0.7088           0.6338         0.8319         0.8169          0.7462
+saved: step6_bs_sweep.png
+
+======================================================================
+Summary
+======================================================================
+                   config  final_train_acc  final_test_acc
+baseline (lr=1e-3, bs=64)           0.7178          0.8262
+        lr=0.0001,  bs=64           0.3528          0.3988
+         lr=0.001,  bs=64           0.7084          0.8188
+           lr=1e-3, bs=32           0.7569          0.8319
+           lr=1e-3, bs=64           0.7088          0.8169
+          lr=1e-3, bs=128           0.6338          0.7462
+
+All outputs written to: /data1/user/lz/ML/week7/outputs
+
