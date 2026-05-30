@@ -1,0 +1,87 @@
+======================================================================
+Step 1  加载数据，展示前 5 条
+======================================================================
+样本总数：5574
+类别分布：
+label
+ham     4827
+spam     747
+spam 占比：0.1340
+
+前 5 条数据：
+  [ ham] Go until jurong point, crazy.. Available only in bugis n great world la e buffet
+  [ ham] Ok lar... Joking wif u oni...
+  [spam] Free entry in 2 a wkly comp to win FA Cup final tkts 21st May 2005. Text FA to 8
+  [ ham] U dun say so early hor... U c already then say...
+  [ ham] Nah I don't think he goes to usf, he lives around here though
+
+======================================================================
+Step 2  WordCloud 绘制词云图
+======================================================================
+已保存：wordcloud_all.png, wordcloud_ham_spam.png
+
+======================================================================
+Step 3  CountVectorizer 文本特征提取（构建词汇表 + 词频矩阵）
+======================================================================
+词频矩阵形状（样本数 × 词汇表大小）：(5574, 8713)
+词汇表长度：8713
+
+第 100 个样本的词向量长度：8713
+第 100 个样本词向量非零元素个数：10
+第 100 个样本非零词（word: count）：
+  anymore:1, don:1, else:1, have:1, me:1, nothing:1, please:1, say:1, text:1, to:1
+
+第 100 个样本原始文本：
+  [ham] Please don't text me anymore. I have nothing else to say.
+
+======================================================================
+Step 4  词汇表词频统计，top-20 柱状图
+======================================================================
+Top-20 高频词：
+  to         2253
+  you        2245
+  the        1339
+  and        980
+  in         903
+  is         897
+  me         807
+  my         766
+  it         752
+  for        711
+  your       681
+  of         623
+  call       593
+  that       586
+  have       578
+  on         538
+  now        499
+  are        495
+  can        471
+  so         462
+已保存：top20_words.png
+
+======================================================================
+Step 5  划分训练/测试集 (test=20%)，MultinomialNB 建模
+======================================================================
+训练集：4459 条，测试集：1115 条
+建模词汇表大小（仅训练集）：7716
+
+训练集正确率：0.9942
+测试集正确率：0.9848
+
+测试集混淆矩阵（行=真实，列=预测；0=ham, 1=spam）：
+          pred_ham  pred_spam
+true_ham       963          3
+true_spam       14        135
+
+分类报告：
+              precision    recall  f1-score   support
+
+         ham     0.9857    0.9969    0.9913       966
+        spam     0.9783    0.9060    0.9408       149
+
+    accuracy                         0.9848      1115
+   macro avg     0.9820    0.9515    0.9660      1115
+weighted avg     0.9847    0.9848    0.9845      1115
+
+已保存：confusion_matrix.png

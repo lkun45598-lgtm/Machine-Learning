@@ -1,0 +1,2 @@
+n_samples,spam_ratio,vocab_size_full,vocab_size_train,train_acc,test_acc
+5574,0.134,8713,7716,0.9942,0.9848

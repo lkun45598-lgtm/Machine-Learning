@@ -15,6 +15,7 @@ Machine-Learning/
 ├── week5/          # 实验五：基于决策树的鸢尾花分类
 ├── week6/          # 实验六：随机森林、XGBoost 预测糖尿病
 ├── week7/          # 实验七：基于改进 LeNet 的 SVHN 街景数字识别
+├── week8/          # 实验八：朴素贝叶斯实现垃圾短信分类
 └── ...
 ```
 
@@ -29,6 +30,7 @@ Machine-Learning/
 | Week 5 | 鸢尾花分类 | DecisionTreeClassifier (entropy / gini) + 缺失值处理（丢弃 / 均值 / KNN / 标记） |
 | Week 6 | 糖尿病预测 | RandomForest + XGBoost + GridSearchCV (9 维超参) + 特征重要性对比 |
 | Week 7 | SVHN 街景数字识别 | 改进 LeNet (PyTorch) + Adam + 数据增强 + lr / batch 超参扫描 |
+| Week 8 | 垃圾短信分类 | CountVectorizer + MultinomialNB + WordCloud 词云 / top-20 词频可视化 |
 
 ---
 
