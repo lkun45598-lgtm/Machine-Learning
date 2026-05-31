@@ -35,13 +35,13 @@ conda run -n pytorch python experiment8.py
 | 指标 | 数值 |
 |---|---|
 | 样本总数 | 5574 |
-| 全量词汇表大小 | 8920 |
+| 全量词汇表大小 | 8713 |
 | 训练集词汇表大小 | 7716 |
 | 训练集正确率 | **0.9942** |
 | 测试集正确率 | **0.9848** |
 
-第 100 个样本（`ham`）原文：`Please don't text me anymore. I have nothing else to say.`
-其词向量长度 = 全量词汇表大小 8920，非零词 10 个（`anymore, don, else, have, me, nothing, please, say, text, to`，各出现 1 次）。
+第 100 个样本（1-based，对应下标 99，`ham`）原文：`I see a cup of coffee animation`
+其词向量长度 = 全量词汇表大小 8713，非零词 5 个（`animation, coffee, cup, of, see`，各出现 1 次）。
 
 测试集混淆矩阵（0=ham, 1=spam）：
 

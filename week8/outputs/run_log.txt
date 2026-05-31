@@ -27,12 +27,12 @@ Step 3  CountVectorizer 文本特征提取（构建词汇表 + 词频矩阵）
 词汇表长度：8713
 
 第 100 个样本的词向量长度：8713
-第 100 个样本词向量非零元素个数：10
+第 100 个样本词向量非零元素个数：5
 第 100 个样本非零词（word: count）：
-  anymore:1, don:1, else:1, have:1, me:1, nothing:1, please:1, say:1, text:1, to:1
+  animation:1, coffee:1, cup:1, of:1, see:1
 
 第 100 个样本原始文本：
-  [ham] Please don't text me anymore. I have nothing else to say.
+  [ham] I see a cup of coffee animation
 
 ======================================================================
 Step 4  词汇表词频统计，top-20 柱状图

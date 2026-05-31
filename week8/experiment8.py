@@ -125,15 +125,16 @@ vocab = vec_explore.get_feature_names_out()
 log(f"词频矩阵形状（样本数 × 词汇表大小）：{X_all.shape}")
 log(f"词汇表长度：{len(vocab)}")
 
-idx = 100  # 第 100 个样本（0-based 索引 100，即第 101 条；按下标 100 取）
-vec_100 = X_all[idx].toarray().ravel()
-log(f"\n第 {idx} 个样本的词向量长度：{len(vec_100)}")
-log(f"第 {idx} 个样本词向量非零元素个数：{int((vec_100 > 0).sum())}")
+sample_no = 100              # 文档要求的“第 100 个样本”（1-based，按人类计数）
+sample_idx = sample_no - 1   # Python 是 0-based，第 100 个对应下标 99
+vec_100 = X_all[sample_idx].toarray().ravel()
+log(f"\n第 {sample_no} 个样本的词向量长度：{len(vec_100)}")
+log(f"第 {sample_no} 个样本词向量非零元素个数：{int((vec_100 > 0).sum())}")
 nz = np.nonzero(vec_100)[0]
-log("第 {} 个样本非零词（word: count）：".format(idx))
+log("第 {} 个样本非零词（word: count）：".format(sample_no))
 log("  " + ", ".join(f"{vocab[j]}:{vec_100[j]}" for j in nz))
-log(f"\n第 {idx} 个样本原始文本：")
-log(f"  [{df.loc[idx, 'label']}] {df.loc[idx, 'text']}")
+log(f"\n第 {sample_no} 个样本原始文本：")
+log(f"  [{df.loc[sample_idx, 'label']}] {df.loc[sample_idx, 'text']}")
 
 # ----------------------------------------------------------------------------
 # Step 4  词频统计 + top-20 柱状图
